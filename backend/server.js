@@ -9,28 +9,26 @@ const fs = require('fs');
 const app = express();
 const server = createServer(app);
 
-// Ensure uploads directory exists
+// Create uploads folder if not exists
 const uploadPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath);
 }
 
-// Middleware
+// CORS Middleware
 app.use(cors({
-  origin: ['https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app/', 'http://localhost:5173'],
+  origin: [
+    'https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app',
+    'http://localhost:5173'
+  ],
   credentials: true
 }));
 app.use('/uploads', express.static(uploadPath));
 
-// Multer setup
+// Multer storage config
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  },
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
 });
 const upload = multer({ storage });
 
@@ -40,16 +38,16 @@ app.post('/upload', upload.single('file'), (req, res) => {
   if (!file) return res.status(400).json({ error: 'No file uploaded' });
 
   const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
-  res.json({
-    url: fileUrl,
-    type: file.mimetype,
-  });
+  res.json({ url: fileUrl, type: file.mimetype });
 });
 
-// Socket.io
+// Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: ['https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app/', 'http://localhost:5173'],
+    origin: [
+      'https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app',
+      'http://localhost:5173'
+    ],
     methods: ['GET', 'POST'],
   },
 });
@@ -88,7 +86,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start server
-server.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+// Server listener
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
