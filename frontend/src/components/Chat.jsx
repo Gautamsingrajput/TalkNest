@@ -29,6 +29,7 @@ const Chat = () => {
 
     // Listen for media messages (images, videos)
     socket.on('media message', (data) => {
+      // Data received might now contain 'mimeType' along with 'url'
       setMessages((prev) => [...prev, { ...data, type: 'media' }]);
     });
 
@@ -69,7 +70,13 @@ const Chat = () => {
 
     try {
       const res = await axios.post(`${BACKEND_URL}/upload`, formData);
-      socket.emit('media message', res.data);
+      // Assuming res.data contains { url: "..." }
+      // We are now sending the original file's mimeType along with the URL
+      const mediaData = {
+          url: res.data.url,
+          mimeType: file.type // Use the original file's mimeType from the browser
+      };
+      socket.emit('media message', mediaData);
     } catch (err) {
       console.error('Upload failed:', err);
     }
@@ -147,14 +154,15 @@ const Chat = () => {
                         <span className="ml-2 text-xs text-gray-400">[{msg.time}]</span>
                       </div>
                       <div className="mt-1">
-                        {msg.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                        {/* Check msg.mimeType first for reliable rendering */}
+                        {msg.mimeType && msg.mimeType.startsWith('image/') ? (
                           <img
                             src={msg.url}
                             alt="media"
                             className="max-w-full h-auto rounded-lg shadow-sm border border-gray-700"
                             onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150/333/eee?text=Image+Load+Error'; }}
                           />
-                        ) : msg.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                        ) : msg.mimeType && msg.mimeType.startsWith('video/') ? (
                           <video
                             src={msg.url}
                             controls
@@ -164,14 +172,34 @@ const Chat = () => {
                             Your browser does not support the video tag.
                           </video>
                         ) : (
-                          <a
-                            href={msg.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-400 underline text-sm sm:text-base hover:text-blue-300 transition-colors"
-                          >
-                            View file: {msg.url.split('/').pop()}
-                          </a>
+                          // Fallback to existing extension check if mimeType isn't available
+                          // or if it's not a recognized image/video mimeType
+                          msg.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                            <img
+                              src={msg.url}
+                              alt="media"
+                              className="max-w-full h-auto rounded-lg shadow-sm border border-gray-700"
+                              onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150/333/eee?text=Image+Load+Error'; }}
+                            />
+                          ) : msg.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                            <video
+                              src={msg.url}
+                              controls
+                              className="max-w-full h-auto rounded-lg shadow-sm border border-gray-700"
+                              onError={(e) => { e.target.onerror = null; e.target.src = ''; console.log('Video load error'); }}
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <a
+                              href={msg.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-400 underline text-sm sm:text-base hover:text-blue-300 transition-colors"
+                            >
+                              View file: {msg.url.split('/').pop()}
+                            </a>
+                          )
                         )}
                       </div>
                     </div>
