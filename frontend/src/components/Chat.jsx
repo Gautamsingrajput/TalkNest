@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
-// Ensure these image paths are correctly handled in your environment
-// In a real project, you'd likely import them or use public URLs
-const uploadImg = "https://placehold.co/24x24/E5E7EB/1F2937?text=Upload"; // Placeholder for upload.png
-const nest = "https://placehold.co/40x40/EC4899/FFFFFF?text=Nest";     // Placeholder for nest.png
+import uploadImg from '../assets/upload.png';
+import nest from '../assets/nest.png';
 
 // 🔗 Deployed backend URL
 const BACKEND_URL = 'https://talknest-1fir.onrender.com';
