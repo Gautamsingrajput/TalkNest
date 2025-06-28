@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 
 import uploadImg from '../assets/upload.png';
-import nest from '../assets/nest.png';
+import nest from '../assets/logo1.png';
 
 // 🔗 Deployed backend URL
 const BACKEND_URL = 'https://talknest-1fir.onrender.com';
