@@ -113,7 +113,8 @@ const Chat = () => {
       // Main Chat Interface - now directly takes full viewport height and width
       // and inherits the background from the body or a higher-level CSS.
       // Removed `min-h-screen`, `items-center`, `justify-center`, `p-0 sm:p-4` as it's the main app now.
-      <div className="bg-[#FCE9EC] rounded-none sm:rounded-lg w-full h-screen sm:h-[90vh] flex flex-col ring-2 ring-purple-400 overflow-hidden">
+      // Changed h-screen sm:h-[90vh] to just h-screen for full height on all devices.
+      <div className="bg-[#FCE9EC] rounded-none sm:rounded-lg w-full h-screen flex flex-col ring-2 ring-purple-400 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white p-3 sm:p-4 rounded-t-lg font-semibold shadow-md">
           <div className='flex items-center gap-2'>
