@@ -81,15 +81,17 @@ const Chat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-2 sm:p-4 font-sans">
-      {!joined ? (
-        // Join Chat Form
+    // Conditional rendering of either the join form or the chat interface
+    // The main container classes (full screen, background, centering) are applied based on the state.
+    !joined ? (
+      // Join Chat Form container - now handles full screen centering
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-0 sm:p-4 font-sans">
         <form
           onSubmit={(e) => {
-            e.preventDefault(); // Prevent default form submission
-            handleJoin(); // Call handleJoin
+            e.preventDefault();
+            handleJoin();
           }}
-          className="bg-purple-700 p-6 rounded-xl shadow-lg max-w-sm w-full mx-auto sm:max-w-md" // Added mx-auto for centering
+          className="bg-purple-700 p-6 rounded-xl shadow-lg max-w-sm w-full mx-auto sm:max-w-md"
         >
           <h2 className="text-2xl font-bold mb-4 text-center text-white">Join TalkNest</h2>
           <input
@@ -97,7 +99,7 @@ const Chat = () => {
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required // Make username required
+            required
           />
           <button
             type="submit"
@@ -106,122 +108,124 @@ const Chat = () => {
             Join
           </button>
         </form>
-      ) : (
-        // Main Chat Interface - Adjusted for full screen height on small devices
-        <div className="bg-[#FCE9EC] rounded-lg w-full max-w-full sm:max-w-3xl h-full sm:h-[90vh] flex flex-col ring-2 ring-purple-400 overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white p-3 sm:p-4 rounded-t-lg font-semibold shadow-md">
-            <div className='flex items-center gap-2'>
-              <img className='h-8 w-8 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
-              <h1 className="text-xl sm:text-2xl">TalkNest</h1>
-            </div>
-            <p className="text-sm sm:text-base">Welcome, <span className="font-bold">{username}</span></p>
+      </div>
+    ) : (
+      // Main Chat Interface - now directly takes full viewport height and width
+      // and inherits the background from the body or a higher-level CSS.
+      // Removed `min-h-screen`, `items-center`, `justify-center`, `p-0 sm:p-4` as it's the main app now.
+      <div className="bg-[#FCE9EC] rounded-none sm:rounded-lg w-full h-screen sm:h-[90vh] flex flex-col ring-2 ring-purple-400 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white p-3 sm:p-4 rounded-t-lg font-semibold shadow-md">
+          <div className='flex items-center gap-2'>
+            <img className='h-8 w-8 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
+            <h1 className="text-xl sm:text-2xl">TalkNest</h1>
           </div>
-
-          {/* Messages Display Area */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 bg-zinc-800 custom-scrollbar">
-            {messages.map((msg, i) => {
-              const isMe = msg.user === username;
-              const bubbleStyle = isMe
-                ? 'bg-gradient-to-br from-pink-800 via-fuchsia-800 to-purple-800 text-white self-end'
-                : 'bg-neutral-700 text-white self-start';
-
-              return (
-                <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
-                  {msg.type === 'system' ? (
-                    <div className="text-center text-gray-400 italic text-sm w-full my-1">
-                      {msg.msg}
-                    </div>
-                  ) : msg.type === 'chat' ? (
-                    <div className={`${bubbleStyle} px-3 py-2 rounded-xl shadow-md max-w-[85%] break-words`}>
-                      <div className="text-xs sm:text-sm mb-1">
-                        <b>{msg.user}</b>
-                        <span className="ml-2 text-xs text-gray-400">[{msg.time}]</span>
-                      </div>
-                      <div className="text-sm sm:text-base">{msg.msg}</div>
-                    </div>
-                  ) : msg.type === 'media' ? (
-                    <div className={`${bubbleStyle} p-2 rounded-xl shadow-md max-w-[85%]`}>
-                      <div className="text-xs sm:text-sm mb-1">
-                        <b>{msg.user}</b>
-                        <span className="ml-2 text-xs text-gray-400">[{msg.time}]</span>
-                      </div>
-                      <div className="mt-1">
-                        {msg.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
-                          <img
-                            src={msg.url}
-                            alt="media"
-                            className="max-w-full h-auto rounded-lg shadow-sm"
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150?text=Image+Load+Error'; }}
-                          />
-                        ) : msg.url.match(/\.(mp4|webm|ogg)$/i) ? (
-                          <video
-                            src={msg.url}
-                            controls
-                            className="max-w-full h-auto rounded-lg shadow-sm"
-                            onError={(e) => { e.target.onerror = null; e.target.src = ''; console.log('Video load error'); }}
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                        ) : (
-                          <a
-                            href={msg.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-300 underline text-sm sm:text-base hover:text-blue-200 transition-colors"
-                          >
-                            View file: {msg.url.split('/').pop()}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Form */}
-          <form onSubmit={handleSubmit} className="p-3 sm:p-4 rounded-b-lg bg-gradient-to-br from-purple-500 to-pink-500 flex gap-2 items-center shadow-inner">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-grow bg-white rounded-xl p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-purple-800 text-gray-800 text-sm sm:text-base"
-            />
-            <div className="relative">
-              <input
-                id="file-upload"
-                type="file"
-                accept="image/*,video/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) handleFileUpload(file);
-                  e.target.value = null;
-                }}
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer p-2 sm:p-3 rounded-full bg-purple-100 hover:bg-purple-200 transition inline-flex items-center justify-center shadow-md"
-                title="Attach file"
-              >
-                <img src={uploadImg} alt="Upload" className="h-5 w-5 sm:h-6 sm:w-6 object-contain" />
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="bg-purple-700 shadow-xl hover:bg-purple-800 hover:shadow-purple-900 text-white px-4 py-2 sm:px-5 sm:py-3 rounded-2xl transition-all duration-300 ease-in-out font-semibold text-sm sm:text-base"
-            >
-              Send
-            </button>
-          </form>
+          <p className="text-sm sm:text-base">Welcome, <span className="font-bold">{username}</span></p>
         </div>
-      )}
-    </div>
+
+        {/* Messages Display Area */}
+        <div className="flex-1 overflow-y-auto px-4 py-3 bg-zinc-800 custom-scrollbar">
+          {messages.map((msg, i) => {
+            const isMe = msg.user === username;
+            const bubbleStyle = isMe
+              ? 'bg-gradient-to-br from-pink-800 via-fuchsia-800 to-purple-800 text-white self-end'
+              : 'bg-neutral-700 text-white self-start';
+
+            return (
+              <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
+                {msg.type === 'system' ? (
+                  <div className="text-center text-gray-400 italic text-sm w-full my-1">
+                    {msg.msg}
+                  </div>
+                ) : msg.type === 'chat' ? (
+                  <div className={`${bubbleStyle} px-3 py-2 rounded-xl shadow-md max-w-[85%] break-words`}>
+                    <div className="text-xs sm:text-sm mb-1">
+                      <b>{msg.user}</b>
+                      <span className="ml-2 text-xs text-gray-400">[{msg.time}]</span>
+                    </div>
+                    <div className="text-sm sm:text-base">{msg.msg}</div>
+                  </div>
+                ) : msg.type === 'media' ? (
+                  <div className={`${bubbleStyle} p-2 rounded-xl shadow-md max-w-[85%]`}>
+                    <div className="text-xs sm:text-sm mb-1">
+                      <b>{msg.user}</b>
+                      <span className="ml-2 text-xs text-gray-400">[{msg.time}]</span>
+                    </div>
+                    <div className="mt-1">
+                      {msg.url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                        <img
+                          src={msg.url}
+                          alt="media"
+                          className="max-w-full h-auto rounded-lg shadow-sm"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150?text=Image+Load+Error'; }}
+                        />
+                      ) : msg.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                        <video
+                          src={msg.url}
+                          controls
+                          className="max-w-full h-auto rounded-lg shadow-sm"
+                          onError={(e) => { e.target.onerror = null; e.target.src = ''; console.log('Video load error'); }}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <a
+                          href={msg.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-300 underline text-sm sm:text-base hover:text-blue-200 transition-colors"
+                        >
+                          View file: {msg.url.split('/').pop()}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Form */}
+        <form onSubmit={handleSubmit} className="p-3 sm:p-4 rounded-b-lg bg-gradient-to-br from-purple-500 to-pink-500 flex gap-2 items-center shadow-inner">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-grow bg-white rounded-xl p-2 sm:p-3 focus:outline-none focus:ring-2 focus:ring-purple-800 text-gray-800 text-sm sm:text-base"
+          />
+          <div className="relative">
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) handleFileUpload(file);
+                e.target.value = null;
+              }}
+            />
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer p-2 sm:p-3 rounded-full bg-purple-100 hover:bg-purple-200 transition inline-flex items-center justify-center shadow-md"
+              title="Attach file"
+            >
+              <img src={uploadImg} alt="Upload" className="h-5 w-5 sm:h-6 sm:w-6 object-contain" />
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-purple-700 shadow-xl hover:bg-purple-800 hover:shadow-purple-900 text-white px-4 py-2 sm:px-5 sm:py-3 rounded-2xl transition-all duration-300 ease-in-out font-semibold text-sm sm:text-base"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+    )
   );
 };
 
