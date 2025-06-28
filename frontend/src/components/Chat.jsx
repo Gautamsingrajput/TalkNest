@@ -116,7 +116,8 @@ const Chat = () => {
         {/* Header */}
         <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white px-3 py-2 sm:p-4 rounded-t-lg font-semibold shadow-md">
           <div className='flex items-center gap-2'>
-            <img className='h-11 w-8 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
+            {/* Logo Image: Adjusted dimensions and added object-contain */}
+            <img className='h-9 w-9 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1 object-contain' src={nest} alt="logo" />
             <h1 className="text-xl sm:text-2xl">TalkNest</h1>
           </div>
           <p className="text-sm sm:text-base">Welcome, <span className="font-bold">{username}</span></p>
