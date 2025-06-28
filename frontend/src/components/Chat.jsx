@@ -107,8 +107,8 @@ const Chat = () => {
           </button>
         </form>
       ) : (
-        // Main Chat Interface
-        <div className="bg-[#FCE9EC] rounded-lg w-full max-w-full sm:max-w-3xl h-[90vh] flex flex-col ring-2 ring-purple-400 overflow-hidden">
+        // Main Chat Interface - Adjusted for full screen height on small devices
+        <div className="bg-[#FCE9EC] rounded-lg w-full max-w-full sm:max-w-3xl h-full sm:h-[90vh] flex flex-col ring-2 ring-purple-400 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white p-3 sm:p-4 rounded-t-lg font-semibold shadow-md">
             <div className='flex items-center gap-2'>
@@ -124,7 +124,7 @@ const Chat = () => {
               const isMe = msg.user === username;
               const bubbleStyle = isMe
                 ? 'bg-gradient-to-br from-pink-800 via-fuchsia-800 to-purple-800 text-white self-end'
-                : 'bg-neutral-700 text-white self-start'; // Changed items-end/start to self-end/start for direct flex item alignment
+                : 'bg-neutral-700 text-white self-start';
 
               return (
                 <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`}>
@@ -151,15 +151,15 @@ const Chat = () => {
                           <img
                             src={msg.url}
                             alt="media"
-                            className="max-w-full h-auto rounded-lg shadow-sm" // Adjusted for responsiveness
-                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150?text=Image+Load+Error'; }} // Fallback
+                            className="max-w-full h-auto rounded-lg shadow-sm"
+                            onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/200x150?text=Image+Load+Error'; }}
                           />
                         ) : msg.url.match(/\.(mp4|webm|ogg)$/i) ? (
                           <video
                             src={msg.url}
                             controls
-                            className="max-w-full h-auto rounded-lg shadow-sm" // Adjusted for responsiveness
-                            onError={(e) => { e.target.onerror = null; e.target.src = ''; console.log('Video load error'); }} // Fallback
+                            className="max-w-full h-auto rounded-lg shadow-sm"
+                            onError={(e) => { e.target.onerror = null; e.target.src = ''; console.log('Video load error'); }}
                           >
                             Your browser does not support the video tag.
                           </video>
@@ -170,7 +170,7 @@ const Chat = () => {
                             rel="noopener noreferrer"
                             className="text-blue-300 underline text-sm sm:text-base hover:text-blue-200 transition-colors"
                           >
-                            View file: {msg.url.split('/').pop()} {/* Display filename */}
+                            View file: {msg.url.split('/').pop()}
                           </a>
                         )}
                       </div>
@@ -179,7 +179,7 @@ const Chat = () => {
                 </div>
               );
             })}
-            <div ref={messagesEndRef} /> {/* Scroll target */}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Form */}
@@ -200,7 +200,7 @@ const Chat = () => {
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) handleFileUpload(file);
-                  e.target.value = null; // Clear the input after selection
+                  e.target.value = null;
                 }}
               />
               <label
@@ -226,4 +226,3 @@ const Chat = () => {
 };
 
 export default Chat;
-
