@@ -4,7 +4,9 @@ import axios from 'axios';
 import uploadImg from '../assets/upload.png';
 import nest from '../assets/nest.png';
 
-const socket = io('http://localhost:3000');
+// 🔗 Deployed backend URL
+const BACKEND_URL = 'https://talknest-1fir.onrender.com';
+const socket = io(BACKEND_URL);
 
 const Chat = () => {
   const [username, setUsername] = useState('');
@@ -56,7 +58,7 @@ const Chat = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const res = await axios.post('http://localhost:3000/upload', formData);
+      const res = await axios.post(`${BACKEND_URL}/upload`, formData);
       socket.emit('media message', res.data);
     } catch (err) {
       console.error('Upload failed:', err);
@@ -66,26 +68,24 @@ const Chat = () => {
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-2 sm:p-4">
       {!joined ? (
-<form
-  onSubmit={(e) => {
-    e.preventDefault();
-    handleJoin();
-  }}
-  className="bg-purple-700 p-6 rounded-xl shadow-lg max-w-md w-full"
->
-  <h2 className="text-2xl font-bold mb-4 text-center text-white">Join Chat</h2>
-  <input
-    className="w-full bg-neutral-300 p-2 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-blue-200 outline-none mb-3"
-    placeholder="Enter your username"
-    value={username}
-    onChange={(e) => setUsername(e.target.value)}
-  />
-  <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700">
-    Join
-  </button>
-</form>
-
-
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleJoin();
+          }}
+          className="bg-purple-700 p-6 rounded-xl shadow-lg max-w-md w-full"
+        >
+          <h2 className="text-2xl font-bold mb-4 text-center text-white">Join Chat</h2>
+          <input
+            className="w-full bg-neutral-300 p-2 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-blue-200 outline-none mb-3"
+            placeholder="Enter your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <button type="submit" className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700">
+            Join
+          </button>
+        </form>
       ) : (
         <div className="bg-[#FCE9EC] rounded-lg w-full max-w-3xl h-[90vh] flex flex-col ring-2 ring-purple-400">
           {/* Header */}
@@ -94,7 +94,6 @@ const Chat = () => {
               <img className='h-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
               <h1 className="text-2xl">TalkNest</h1>
             </div>
-
             <p>Welcome, {username}</p>
           </div>
 
