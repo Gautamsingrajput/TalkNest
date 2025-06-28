@@ -4,12 +4,23 @@ const { Server } = require('socket.io');
 const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
+
 const app = express();
 const server = createServer(app);
 
+// Ensure uploads directory exists
+const uploadPath = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
+
 // Middleware
-app.use(cors());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors({
+  origin: ['https://talknest-frontend.onrender.com', 'http://localhost:5173'],
+  credentials: true
+}));
+app.use('/uploads', express.static(uploadPath));
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -28,8 +39,9 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
   if (!file) return res.status(400).json({ error: 'No file uploaded' });
 
+  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
   res.json({
-    url: `http://localhost:3000/uploads/${file.filename}`,
+    url: fileUrl,
     type: file.mimetype,
   });
 });
@@ -37,7 +49,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // Socket.io
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: ['https://talknest-frontend.onrender.com', 'http://localhost:5173'],
     methods: ['GET', 'POST'],
   },
 });
@@ -76,6 +88,7 @@ io.on('connection', (socket) => {
   });
 });
 
+// Start server
 server.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
