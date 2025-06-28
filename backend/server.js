@@ -17,7 +17,7 @@ if (!fs.existsSync(uploadPath)) {
 
 // Middleware
 app.use(cors({
-  origin: ['https://talknest-frontend.onrender.com', 'http://localhost:5173'],
+  origin: ['https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app/', 'http://localhost:5173'],
   credentials: true
 }));
 app.use('/uploads', express.static(uploadPath));
@@ -49,7 +49,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // Socket.io
 const io = new Server(server, {
   cors: {
-    origin: ['https://talknest-frontend.onrender.com', 'http://localhost:5173'],
+    origin: ['https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app/', 'http://localhost:5173'],
     methods: ['GET', 'POST'],
   },
 });
