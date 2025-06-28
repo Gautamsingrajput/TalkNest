@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadPath)) {
 // CORS Middleware
 app.use(cors({
   origin: [
-    'https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app',
+    'https://talknest-1.onrender.com',
     'http://localhost:5173'
   ],
   credentials: true
@@ -45,7 +45,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 const io = new Server(server, {
   cors: {
     origin: [
-      'https://talk-nest-ty1e-qt6escreb-gautamsing-rajputs-projects.vercel.app',
+      'https://talknest-1.onrender.com',
       'http://localhost:5173'
     ],
     methods: ['GET', 'POST'],
