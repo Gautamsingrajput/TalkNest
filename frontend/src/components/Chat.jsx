@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 
 import uploadImg from '../assets/upload.png';
-import nest from '../assets/logo1.png';
+import nest from '../assets/logo2.png';
 
 // 🔗 Deployed backend URL
 const BACKEND_URL = 'https://talknest-1fir.onrender.com';
@@ -114,9 +114,9 @@ const Chat = () => {
       // Changed h-screen sm:h-[90vh] to just h-screen for full height on all devices.
       <div className="bg-[#FCE9EC] rounded-none sm:rounded-lg w-full h-screen flex flex-col ring-2 ring-purple-400 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white p-3 sm:p-4 rounded-t-lg font-semibold shadow-md">
+        <div className="bg-gradient-to-br from-purple-600 to-pink-600 flex justify-between items-center text-white px-3 py-2 sm:p-4 rounded-t-lg font-semibold shadow-md">
           <div className='flex items-center gap-2'>
-            <img className='h-8 w-8 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
+            <img className='h-11 w-8 sm:h-10 sm:w-10 bg-pink-200 rounded-full p-1' src={nest} alt="logo" />
             <h1 className="text-xl sm:text-2xl">TalkNest</h1>
           </div>
           <p className="text-sm sm:text-base">Welcome, <span className="font-bold">{username}</span></p>
